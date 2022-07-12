@@ -10,11 +10,11 @@ def _list_to_df(
     column: str,
     dataset: dict,
 ) -> pd.DataFrame:
-    data = dataset.get("data")
-    type = dataset.get("type")
-    df = pd.DataFrame(
+    data:list = dataset.get("data")
+    data_type:str = dataset.get("type")
+    df:pd.DataFrame = pd.DataFrame(
         data=data,
-        dtype=type,
+        dtype=data_type,
         columns=[column],
     )
     return df
@@ -25,7 +25,7 @@ def _cross_join_df(
     df1: pd.DataFrame,
     df2: pd.DataFrame,
 ) -> pd.DataFrame:
-    df = pd.merge(
+    df:pd.DataFrame = pd.merge(
         df1,
         df2,
         how="cross",
@@ -37,14 +37,14 @@ def df_generate(
     *,
     base_dict: dict,
 ) -> pd.DataFrame:
-    df_create = map(
+    df_create:list[pd.DataFrame] = map(
         lambda x: _list_to_df(
             column=x,
             dataset=base_dict[x],
         ),
         base_dict,
     )
-    df_reduce = reduce(
+    df_reduce:pd.DataFrame = reduce(
         lambda x, y: _cross_join_df(
             df1=x,
             df2=y,
@@ -58,7 +58,7 @@ def df_generate(
 
 
 if __name__ == "__main__":
-    base_dict = {
+    base_dict:dict = {
         "c1": {
             "data": [
                 0,
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             "type": int,
         },
     }
-    df = df_generate(
+    df:pd.DataFrame = df_generate(
         base_dict=base_dict,
     )
     # %%
