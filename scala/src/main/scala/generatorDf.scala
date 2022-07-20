@@ -1,7 +1,7 @@
 import org.apache.spark.sql.types.{DataType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
-object generator_df extends App {
+object generatorDf extends App {
   def df_generate(dataset: Seq[SingleColumnData], spark: SparkSession) = {
     val df_create = dataset.map(x => _list_to_df(x, spark))
     val df_reduce = df_create.reduce((x, y) => _cross_join_df(x, y))
@@ -9,9 +9,11 @@ object generator_df extends App {
   }
 
   def _list_to_df(dataset: SingleColumnData, spark: SparkSession): DataFrame = {
-    val dataSchema = StructType(Array(
-      StructField(dataset.columnName, dataset.columnType),
-    ))
+    val dataSchema = StructType(
+      Array(
+        StructField(dataset.columnName, dataset.columnType)
+      )
+    )
     val dataRows = spark.sparkContext.parallelize(dataset.columnDataTreated)
     val df: DataFrame = spark.createDataFrame(dataRows, dataSchema)
     df
@@ -22,7 +24,11 @@ object generator_df extends App {
     df
   }
 
-  case class SingleColumnData(columnName: String, columnType: DataType, columnData: Seq[Any]) {
+  case class SingleColumnData(
+      columnName: String,
+      columnType: DataType,
+      columnData: Seq[Any]
+  ) {
     val columnDataTreated: Seq[Row] = columnData.map(x => Row(x))
   }
 }
