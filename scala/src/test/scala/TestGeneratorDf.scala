@@ -1,17 +1,22 @@
-import generatorDf.{SingleColumnData, df_generate}
-import org.apache.spark.sql.types.IntegerType
-import org.scalatest.funspec.AnyFunSpec
+package com.experian.latam.coe.utils
 
-class TestGeneratorDf extends AnyFunSpec with SparkSessionTest {
-  describe("Teste 1") {
-    it("wip") {
-      val base_dict = Seq(
+import com.experian.latam.coe.utils.GeneratorDf.{SingleColumnData, dfGenerate}
+import org.apache.spark.sql.types.IntegerType
+import org.scalatest.FunSpec
+
+class TestGeneratorDf extends FunSpec with SparkSessionTestWrapper {
+
+  /** This creates a SparkSession, which will be used to operate on the
+    * DataFrames that we create.
+    */
+  it("test generator") {
+
+    val base_dict =
+      Seq(
         SingleColumnData("c1", IntegerType, Seq(0, 1)),
         SingleColumnData("c2", IntegerType, Seq(0, 1))
       )
-      val df4 = df_generate(base_dict, spark)
-      df4.show()
-    }
+    dfGenerate(base_dict, spark)
+      .show()
   }
-
 }

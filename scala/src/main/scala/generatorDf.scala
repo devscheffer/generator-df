@@ -1,27 +1,27 @@
+package utils
+
 import org.apache.spark.sql.types.{DataType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
-object generatorDf extends App {
-  def df_generate(dataset: Seq[SingleColumnData], spark: SparkSession) = {
-    val df_create = dataset.map(x => _list_to_df(x, spark))
-    val df_reduce = df_create.reduce((x, y) => _cross_join_df(x, y))
-    df_reduce
+object GeneratorDf extends SparkSessionWrapper {
+  def dfGenerate(
+      dataset: Seq[SingleColumnData],
+      spark: SparkSession
+  ): DataFrame = {
+    dataset
+      .map(x => listToDf(x, spark))
+      .reduce((x, y) => x.crossJoin(y)))
+      .coalesce(1)
   }
 
-  def _list_to_df(dataset: SingleColumnData, spark: SparkSession): DataFrame = {
+  def listToDf(dataset: SingleColumnData, spark: SparkSession): DataFrame = {
     val dataSchema = StructType(
       Array(
         StructField(dataset.columnName, dataset.columnType)
       )
     )
     val dataRows = spark.sparkContext.parallelize(dataset.columnDataTreated)
-    val df: DataFrame = spark.createDataFrame(dataRows, dataSchema)
-    df
-  }
-
-  def _cross_join_df(df1: DataFrame, df2: DataFrame): DataFrame = {
-    val df: DataFrame = df1.join(df2)
-    df
+    spark.createDataFrame(dataRows, dataSchema)
   }
 
   case class SingleColumnData(
